@@ -25,10 +25,68 @@
 
 "use strict";
 
+export interface Z80Core {
+   mem_read(address: number): number;
+   mem_write(address: number, value: number): void;
+   io_read(port: number): number;
+   io_write(port: number, value: number): void;
+}
+
+export interface Z80Flags {
+   S: number;
+   Z: number;
+   Y: number;
+   H: number;
+   X: number;
+   P: number;
+   N: number;
+   C: number;
+}
+
+export interface Z80State {
+   a: number;
+   b: number;
+   c: number;
+   d: number;
+   e: number;
+   h: number;
+   l: number;
+   a_prime: number;
+   b_prime: number;
+   c_prime: number;
+   d_prime: number;
+   e_prime: number;
+   h_prime: number;
+   l_prime: number;
+   ix: number;
+   iy: number;
+   i: number;
+   r: number;
+   sp: number;
+   pc: number;
+   flags: Z80Flags;
+   flags_prime: Z80Flags;
+   imode: number;
+   iff1: number;
+   iff2: number;
+   halted: boolean;
+   do_delayed_di: boolean;
+   do_delayed_ei: boolean;
+   cycle_counter: number;
+}
+
+export interface Z80Instance {
+   getState(): Z80State;
+   setState(state: Z80State): void;
+   reset(): void;
+   run_instruction(): number;
+   interrupt(non_maskable: boolean, data?: number): void;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// We'll begin with the object constructor and the public API functions.
 ///////////////////////////////////////////////////////////////////////////////
-function Z80(coreParameter)
+export function Z80(this: any, coreParameter: Z80Core): Z80Instance
 {
    // Obviously we'll be needing the core object's functions again.
    let core = coreParameter;
@@ -43,7 +101,7 @@ function Z80(coreParameter)
                 (typeof core.io_read !== "function")  || (typeof core.io_write !== "function"))
       throw("Z80: Core object is missing required functions.");
    
-   if (this === window)
+   if (typeof window !== "undefined" && this === window)
       throw("Z80: This function is a constructor; call it using operator new.");
 
    // All right, let's initialize the registers.
@@ -1173,7 +1231,7 @@ let do_ix_add = function(operand)
 ///  register loads and the accumulator ALU instructions, in other words).
 /// Similar tables for the ED and DD/FD prefixes follow this one.
 ///////////////////////////////////////////////////////////////////////////////
-let instructions = [];
+let instructions: any[] = [];
 
 // 0x00 : NOP
 instructions[0x00] = function() { };
@@ -2191,7 +2249,7 @@ instructions[0xff] = function()
 ///  there are not very many valid ED-prefixed opcodes in the Z80,
 ///  and many of the ones that are valid are not documented.
 ///////////////////////////////////////////////////////////////////////////////
-let ed_instructions = [];
+let ed_instructions: any[] = [];
 // 0x40 : IN B, (C)
 ed_instructions[0x40] = function()
 {
@@ -2719,7 +2777,7 @@ ed_instructions[0xbb] = function()
 /// The undocumented instructions here are those that deal with only one byte
 ///  of the two-byte IX register; the bytes are designed IXH and IXL here.
 ///////////////////////////////////////////////////////////////////////////////
-let dd_instructions = [];
+let dd_instructions: any[] = [];
 // 0x09 : ADD IX, BC
 dd_instructions[0x09] = function()
 {

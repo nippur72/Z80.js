@@ -1,0 +1,43 @@
+{
+  "name": "z80-js",
+  "version": "1.0.0",
+  "description": "Z80 emulator in JavaScript/TypeScript",
+  "main": "dist/Z80.js",
+  "module": "dist/Z80.js",
+  "types": "dist/Z80.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/Z80.js",
+      "require": "./dist/Z80.js",
+      "types": "./dist/Z80.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "z80",
+    "emulator",
+    "cpu",
+    "typescript",
+    "esm"
+  ],
+  "author": "Molly Howell",
+  "contributors": [
+    "Antonino Porcino <antonino.porcino@gmail.com> (https://github.com/nippur72)"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nippur72/Z80.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nippur72/Z80.js/issues"
+  },
+  "homepage": "https://github.com/nippur72/Z80.js#readme"
+}

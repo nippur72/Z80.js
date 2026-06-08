@@ -1,60 +1,73 @@
 Z80.js
 ======
-This is an emulator for the Z80 processor, written in JavaScript. It is developed to serve as a component of an emulator for a larger system which incorporates a Z80 as its CPU.
+This is an emulator for the Z80 processor, written in JavaScript and TypeScript. It is developed to serve as a component of an emulator for a larger system which incorporates a Z80 as its CPU.
 
-The emulation is highly complete, with a very few minor caveats. Specifically, the emulator completes ZEXALL with a single failure; see Known Issues below.
+> [!NOTE]
+> Since the original project was archived by Molly Howell, it is now continued by Antonino Porcino ([@nippur72](https://github.com/nippur72) on GitHub). This version has been converted to ES Modules and TypeScript.
 
-Using the emulator is fairly simple; just call the Z80 constructor, passing it an argument which is an object I call the emulator core. This object should contain the following functions:
+Installation
+------------
+You can install this package directly from GitHub via npm:
 
-    mem_read(address)
+```bash
+npm install github:nippur72/Z80.js
+```
 
-This function should return the byte at the specified memory address.
+Usage
+-----
+Using the emulator is fairly simple: call the `Z80` constructor function, passing it a `core` object. This object represents the system's memory and I/O bus, and must implement the `Z80Core` interface containing the following functions:
 
-    mem_write(address, value)
+- `mem_read(address: number): number` - Returns the byte at the specified memory address.
+- `mem_write(address: number, value: number): void` - Writes the specified byte to the specified memory address.
+- `io_read(port: number): number` - Returns a byte read from the given I/O port.
+- `io_write(port: number, value: number): void` - Writes the specified byte to the specified I/O port.
 
-This function should write the specified byte to the specified address.
+### TypeScript / ES Modules Example
 
-    io_read(port)
+```typescript
+import { Z80, Z80Core } from 'z80-js';
 
-This function should return a byte read from the given I/O port.
+// Define the emulator core
+const core: Z80Core = {
+   mem_read(address) {
+      return 0; // your memory read implementation
+   },
+   mem_write(address, value) {
+      // your memory write implementation
+   },
+   io_read(port) {
+      return 0; // your I/O read implementation
+   },
+   io_write(port, value) {
+      // your I/O write implementation
+   }
+};
 
-    io_write(port, value)
+// Instantiate the Z80 emulator
+const z80 = new Z80(core);
 
-This function should write the specified byte to the specified I/O port.
+// Reset the CPU
+z80.reset();
 
-There are no requirements placed on this object except that those four functions exist, and there are no other parameters required from you in order to set up the emulator.
+// Run a single instruction (returns the number of T-cycles taken)
+const cycles = z80.run_instruction();
+```
 
-The constructor will return an object containing the following functions, which are the entire public interface to the Z80:
+API Reference
+-------------
+The `Z80` constructor returns a `Z80Instance` object containing the following public API:
 
-    reset()
-
-Resets the processor. This need not be called at power-up, but it can be.
-
-    run_instruction()
-
-Runs the instruction the program counter is currently pointing at, and advances the program counter to the next instruction, then returns the number of T cycles (time cycles, as opposed to machine or M cycles) that instruction took. If an interrupt was triggered during this instruction, the cycles used to handle it will be included.
-
-    interrupt(non_maskable, data)
-
-Triggers an interrupt. non_maskable should be true if the interrupt is a non-maskable interrupt (surprising, I know), and data should contain the value being placed on the data bus, if any (not needed if only NMI's or interrupt mode 1 are being used).
-
-    getState()
-
-Returns an object representing the internal state of the Z80. This can be used as part of an emulator state save routine, a debugger, or anything else that needs to see what's up inside the CPU. The properties of the state object are pretty self-explanatory if you're familiar with the Z80 architecture.
-
-    setState(state)
-
-Replaces the entire internal state of the Z80 with the given state object, in the format returned by getState.
-
-And that's all you need to know about how to use the emulator. Feel free to contact me with any questions.
+- `reset()` - Resets the processor.
+- `run_instruction(): number` - Runs the instruction the program counter is currently pointing at, advances the program counter, and returns the number of T cycles taken (including any cycles spent handling interrupts that were triggered).
+- `interrupt(non_maskable: boolean, data?: number)` - Triggers an interrupt. `non_maskable` should be true if it is an NMI. `data` represents the value placed on the data bus if appropriate (e.g. for IM 0 or IM 2).
+- `getState(): Z80State` - Returns an object representing the internal state of the Z80 (all registers, flags, halted state, etc.).
+- `setState(state: Z80State)` - Replaces the internal state of the Z80 with the given state object.
 
 Known Issues
 ============
 The undocumented flags, sometimes called the X and Y flags, or the 3 and 5 flags, will most likely take on incorrect values as the result of a BIT n, (HL) instruction.
 
 Memory refresh is not emulated. The R register exists and should maintain the correct value, but it isn't used in any way aside from the LD A, R instruction.
-
-Those are the only problems I'm aware of; let me know if you find any others.
 
 License
 =======

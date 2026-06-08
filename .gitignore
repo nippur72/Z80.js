@@ -211,5 +211,10 @@ pip-log.txt
 #Translations
 *.mo
 
-#Mr Developer
 .mr.developer.cfg
+
+# Node
+node_modules/
+dist/
+package-lock.json
+
