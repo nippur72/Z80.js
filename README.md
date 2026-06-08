@@ -3,7 +3,7 @@ Z80.js
 This is an emulator for the Z80 processor, written in JavaScript and TypeScript. It is developed to serve as a component of an emulator for a larger system which incorporates a Z80 as its CPU.
 
 > [!NOTE]
-> Since the original project was archived by Molly Howell, it is now continued by Antonino Porcino ([@nippur72](https://github.com/nippur72) on GitHub). This version has been converted to ES Modules and TypeScript.
+> The original project by Molly Howell ([DrGoldfire/Z80.js](https://github.com/DrGoldfire/Z80.js)) was put in read-only/archived mode on April 5, 2020. This version is a continued fork by Antonino Porcino ([@nippur72](https://github.com/nippur72) on GitHub), updated to support TypeScript and ES Modules.
 
 Installation
 ------------
