@@ -86,7 +86,7 @@ export interface Z80Instance {
 ///////////////////////////////////////////////////////////////////////////////
 /// We'll begin with the object constructor and the public API functions.
 ///////////////////////////////////////////////////////////////////////////////
-export function Z80(this: any, coreParameter: Z80Core): Z80Instance
+export function Z80(coreParameter: Z80Core): Z80Instance
 {
    // Obviously we'll be needing the core object's functions again.
    let core = coreParameter;
@@ -100,9 +100,6 @@ export function Z80(this: any, coreParameter: Z80Core): Z80Instance
    if (!core || (typeof core.mem_read !== "function") || (typeof core.mem_write !== "function") ||
                 (typeof core.io_read !== "function")  || (typeof core.io_write !== "function"))
       throw("Z80: Core object is missing required functions.");
-   
-   if (typeof window !== "undefined" && this === window)
-      throw("Z80: This function is a constructor; call it using operator new.");
 
    // All right, let's initialize the registers.
    // First, the standard 8080 registers.
